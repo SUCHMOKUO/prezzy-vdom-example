@@ -1,3 +1,5 @@
+/** @jsx h */
+
 const CREATE = 'CREATE'
 const REMOVE = 'REMOVE'
 const REPLACE = 'REPLACE'
