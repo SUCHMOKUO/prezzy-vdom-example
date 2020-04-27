@@ -1,14 +1,18 @@
-<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VDOM</title>
   <style>
     body { margin: 0; font-size: 24; font-family: sans-serif }
     .my-class-0 { background: #eff }
     .my-class-1 { background: #fef }
     .my-class-2 { background: #ffe }
   </style>
-  <script src="compiled.js"></script>
+  <script src="compiled.js" defer></script>
+</head>
+<body>
   <main id="main"></main>
-  <script>
-    var main = document.getElementById('main')
-    render(main)
-  </script>
 </body>
+</html>
