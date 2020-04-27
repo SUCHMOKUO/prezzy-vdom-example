@@ -1,8 +1,8 @@
-From my Youtube Video, "Let's Build a Virtual DOM from Scratch" https://youtu.be/l2Tu0NqH0qU
+## 一个简单的 Virtual DOM 实现（含 Diff 算法）
 
-Do as you like with it.
+原作者 Youtube 视频： "Let's Build a Virtual DOM from Scratch" https://youtu.be/l2Tu0NqH0qU
 
-Sources:
+其他相关资料:
 
 - https://github.com/Matt-Esch/virtual-dom
 - https://medium.com/@deathmood/how-to-write-your-own-virtual-dom-ee74acc13060
@@ -10,7 +10,4 @@ Sources:
 - https://babeljs.io/docs/plugins/transform-react-jsx/
 - https://github.com/facebook/react
 - http://stackoverflow.com/a/10050831
-
-Also, check out https://github.com/Bogdan-Lyashenko/Under-the-hood-ReactJS for more in-depth on specific React's inner-workings.
-
-If you're interested in what I'm working on... https://sagefy.org
+- https://github.com/Bogdan-Lyashenko/Under-the-hood-ReactJS
