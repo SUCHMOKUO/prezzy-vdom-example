@@ -9,6 +9,7 @@ function buildDOMTree(root) {
     return document.createTextNode(root);
   }
   const $root = document.createElement(root.type);
+  setProps($root, root.props);
   root.children
     .map(buildDOMTree)
     .forEach(($child) => $root.appendChild($child));
@@ -34,6 +35,54 @@ function isTextNode(node) {
   return notEmptyNode(node) && typeof node !== "object";
 }
 
+function setProp($el, name, val) {
+  if (name === "className") {
+    name = "class";
+  }
+  if (typeof val === "boolean") {
+    $el[name] = val;
+  } else if (isEventProp(name)) {
+    $el[name.toLowerCase()] = val;
+  } else {
+    $el.setAttribute(name, val);
+  }
+}
+
+function removeProp($el, name) {
+  if (name === "className") {
+    name = "class";
+  }
+  if (isEventProp(name)) {
+    $el[name.toLowerCase()] = null;
+  } else {
+    $el.removeAttribute(name);
+  }
+}
+
+const eventPropRegx = /^on/;
+function isEventProp(name) {
+  return eventPropRegx.test(name);
+}
+
+function setProps($el, props) {
+  Object.entries(props).forEach(([propName, propVal]) => {
+    setProp($el, propName, propVal);
+  });
+}
+
+function updatePropsIfNeed($el, newProps, oldProps) {
+  const newPropsName = Object.keys(newProps);
+  const oldPropsName = Object.keys(oldProps);
+  const propsToRemove = oldPropsName.filter(
+    (name) => !newPropsName.includes(name)
+  );
+  const propsToUpdate = newPropsName.filter(
+    (name) => !Object.is(oldProps[name], newProps[name])
+  );
+  propsToRemove.forEach((name) => removeProp($el, name));
+  propsToUpdate.forEach((name) => setProp($el, name, newProps[name]));
+}
+
 /**
  * 对比新旧 vdom 树（diff），同步更新 dom 树
  */
@@ -52,6 +101,8 @@ function diffUpdateDOMTree($parent, newNode, oldNode, index = 0) {
     // 替换节点
     $parent.replaceChild(buildDOMTree(newNode), $currentNode);
   } else if (!isTextNode(newNode)) {
+    // 如果属性有变化，则更新属性
+    updatePropsIfNeed($currentNode, newNode.props, oldNode.props);
     // 向下递归，更新子节点
     const maxChildLen = Math.max(
       newNode.children.length,
@@ -100,10 +151,12 @@ function render(root, $root) {
 
 function App(count) {
   return (
-    <p>
+    <p style="background-color: #eee">
       <h1>{count}</h1>
+      <button onClick={() => alert("haha")}>click</button>
+      <input disabled={count % 2 === 0} />
       {count % 2 !== 0 ? <p>it's an odd number!</p> : null}
-      <span>this is a span</span>
+      <span className={`my-class-${count % 3}`}>this is a span</span>
     </p>
   );
 }
