@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "watch": "npm-watch",
     "compile": "babel index.js --out-file compiled.js"
   },
   "watch": {

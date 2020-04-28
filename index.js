@@ -10,18 +10,12 @@ function buildDOMTree(root) {
   }
   const $root = document.createElement(root.type);
   root.children
-    .filter(notEmptyNode)
     .map(buildDOMTree)
     .forEach(($child) => $root.appendChild($child));
   return $root;
 }
 
 function isNodeChanged(newNode, oldNode) {
-  if (!notEmptyNode(newNode) && !notEmptyNode(oldNode)) {
-    // 空节点到空节点之间没发生改变
-    return false;
-  }
-  
   return (
     // 类型变化，文本节点变元素节点，或者反之
     typeof newNode !== typeof oldNode ||
@@ -40,20 +34,6 @@ function isTextNode(node) {
   return notEmptyNode(node) && typeof node !== "object";
 }
 
-function insertNodeAt($parent, $child, index = 0) {
-  if (!$parent || !$child) {
-    return;
-  }
-  const len = $parent.children.length;
-  if (len === 0 || index >= len) {
-    $parent.appendChild($child);
-  } else if (index < 0) {
-    $parent.insertBefore($child, $parent.children[0]);
-  } else {
-    $parent.insertBefore($child, $parent.children[index]);
-  }
-}
-
 /**
  * 对比新旧 vdom 树（diff），同步更新 dom 树
  */
@@ -61,12 +41,10 @@ function diffUpdateDOMTree($parent, newNode, oldNode, index = 0) {
   if (!$parent) {
     return;
   }
-
   const $currentNode = $parent.childNodes[index];
-
   if (!notEmptyNode(oldNode) && notEmptyNode(newNode)) {
     // 新增节点
-    insertNodeAt($parent, buildDOMTree(newNode), index);
+    $parent.appendChild(buildDOMTree(newNode));
   } else if (notEmptyNode(oldNode) && !notEmptyNode(newNode)) {
     // 删除节点
     $parent.removeChild($currentNode);
@@ -80,7 +58,12 @@ function diffUpdateDOMTree($parent, newNode, oldNode, index = 0) {
       oldNode.children.length
     );
     for (let i = 0; i < maxChildLen; i++) {
-      diffUpdateDOMTree($currentNode, newNode.children[i], oldNode.children[i], i);
+      diffUpdateDOMTree(
+        $currentNode,
+        newNode.children[i],
+        oldNode.children[i],
+        i
+      );
     }
   }
 }
@@ -90,6 +73,7 @@ function diffUpdateDOMTree($parent, newNode, oldNode, index = 0) {
  */
 function h(type, props, ...children) {
   props = props || {};
+  children = children.filter(notEmptyNode);
   return { type, props, children };
 }
 
@@ -118,11 +102,7 @@ function App(count) {
   return (
     <p>
       <h1>{count}</h1>
-      {count % 2 !== 0 ? (
-        <p>it's an odd number!</p>
-      ) : (
-        null
-      )}
+      {count % 2 !== 0 ? <p>it's an odd number!</p> : null}
       <span>this is a span</span>
     </p>
   );
